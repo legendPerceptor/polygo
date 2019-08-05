@@ -6,3 +6,4 @@ tests/models/
 .pytest_cache
 data/
 .DS_Store
+polygo.egg-info

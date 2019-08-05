@@ -12,7 +12,7 @@ LICENSE = 'MIT'
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-long_description = open(os.path.join(here, 'README.md'), encoding='utf-8').read()
+long_description = open(os.path.join(here, 'readme.md'), encoding='utf-8').read()
 
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist bdist_wheel upload')
