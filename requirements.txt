@@ -1,0 +1,6 @@
+seqeval
+numpy
+allennlp
+keras
+sklearn
+tensorflow
