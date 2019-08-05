@@ -102,6 +102,7 @@ class IndexTransformer(BaseEstimator, TransformerMixin):
             y = pad_sequences(y, padding='post')
             y = to_categorical(y, self.label_size).astype(int)
             # issues with to_categorical
+            y = y if len(y.shape) == 3 else np.expand_dims(y, axis=0)
             return features, y
         else:
             return features
@@ -224,6 +225,7 @@ class ELMoTransformer(IndexTransformer):
             y = pad_sequences(y, padding='post')
             y = to_categorical(y, self.label_size).astype(int)
             # categorical issues
+            y = y if len(y.shape) == 3 else np.expand_dims(y, axis=0)
             return features, y
         else:
             return features
