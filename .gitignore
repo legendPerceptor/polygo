@@ -1,6 +1,8 @@
 .vscode
 .python-version
-tests/__pycache__
+__pycache__/
+polygo/__pycache__/
+tests/__pycache__/
 tests/logs/
 tests/models/
 .pytest_cache

@@ -191,11 +191,12 @@ class ELModel(object):
                             output_dim=self._char_embedding_dim,
                             mask_zero=True,
                             name='char_embedding')(char_ids)
+        char_embeddings = TimeDistributed(Bidirectional(LSTM(self._char_lstm_size)))(char_embeddings)
         elmo_embeddings = Input(shape=(None, 1024), dtype='float32')
 
         word_embeddings = Concatenate()([word_embeddings, char_embeddings, elmo_embeddings])
 
-        word_embeddins = Dropout(self._dropout)(word_embeddings)
+        word_embeddings = Dropout(self._dropout)(word_embeddings)
         z = Bidirectional(LSTM(units=self._word_lstm_size, return_sequences=True))(word_embeddings)
         z = Dense(self._fc_dim, activation='tanh')(z)
 
