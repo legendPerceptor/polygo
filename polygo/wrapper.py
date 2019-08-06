@@ -1,7 +1,7 @@
 from seqeval.metrics import f1_score
 
-from polygo.models import BiLSTMCRF, save_model, load_model
-from polygo.preprocessing import IndexTransformer
+from polygo.models import BiLSTMCRF, save_model, load_model, ELModel
+from polygo.preprocessing import IndexTransformer, ELMoTransformer
 from polygo.tagger import Tagger
 from polygo.trainer import Trainer
 from polygo.utils import filter_embeddings
@@ -146,5 +146,52 @@ class Sequence(object):
     def load(cls, weights_file, params_file, preprocessor_file):
         self = cls()
         self.p = IndexTransformer.load(preprocessor_file)
+        self.model = load_model(weights_file, params_file)
+        return self
+
+
+class ELMoSequence(Sequence):
+
+    def __init__(self,
+                 word_embedding_dim=100,
+                 char_embedding_dim=25,
+                 word_lstm_size=100,
+                 char_lstm_size=25,
+                 fc_dim=100,
+                 dropout=0.5,
+                 embeddings=None,
+                 use_char=True,
+                 use_crf=True,
+                 initial_vocab=None,
+                 optimizer='adam'):
+        super(ELMoSequence,self).__init__(word_embedding_dim,char_embedding_dim,word_lstm_size,char_lstm_size,fc_dim,dropout,embeddings,use_char,use_crf,initial_vocab,optimizer)
+    
+    def fit(self, x_train, y_train, x_valid=None, y_valid=None, epochs=1, batch_size=32, verbose=1, callbacks=None, shuffle=True):
+        
+        p = ELMoTransformer()
+        p.fit(x_train, y_train)
+
+        model = ELModel(char_embedding_dim=self.char_embedding_dim,
+                    word_embedding_dim=self.word_embedding_dim,
+                    char_lstm_size=self.char_lstm_size,
+                    word_lstm_size=self.word_lstm_size,
+                    char_vocab_size=p.char_vocab_size,
+                    word_vocab_size=p.word_vocab_size,
+                    num_labels=p.label_size,
+                    dropout=self.dropout)
+        
+        model, loss = model.build()
+        model.compile(loss=loss, optimizer='adam')
+
+        trainer = Trainer(model,preprocessor=p)
+        trainer.train(x_train,y_train,x_valid,y_valid,epochs,batch_size,verbose,callbacks,shuffle)
+
+        self.p = p
+        self.model = model
+
+    @classmethod
+    def load(cls, weights_file, params_file, preprocessor_file):
+        self = cls()
+        self.p = ELMoTransformer.load(preprocessor_file)
         self.model = load_model(weights_file, params_file)
         return self
