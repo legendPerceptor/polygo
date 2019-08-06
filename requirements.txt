@@ -1,6 +1,6 @@
 seqeval
 numpy
-allennlp
+allennlp==0.7.1
 keras
 sklearn
 tensorflow
