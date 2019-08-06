@@ -208,7 +208,7 @@ class ELMoTransformer(IndexTransformer):
             features: document if matrix.
             y: label id matrix.
         """
-        word_ids = [self._word_vocab_doc2id(doc) for doc in X]
+        word_ids = [self._word_vocab.doc2id(doc) for doc in X]
         word_ids = pad_sequences(word_ids, padding='post')
 
         char_ids = [[self._char_vocab.doc2id(w) for w in doc] for doc in X]
