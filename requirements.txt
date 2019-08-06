@@ -4,3 +4,4 @@ allennlp==0.7.1
 keras
 sklearn
 tensorflow
+matplotlib
